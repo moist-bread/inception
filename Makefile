@@ -1,68 +1,55 @@
-# -->┊( NAMES )┊.´-★☆★
-# NAME	=	PmergeMe
-
-# # -->┊( COMMANDS AND FLAGS )┊.´-★☆★
-# CXX			=	c++
-# CXXFLAGS	=	-Wall -Wextra -Werror -g -std=c++98 -D DEBUG=$(DEBUG)
-# VAL			=	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes -s
-# DEBUG		=	0
-
-# # -->┊( DIRECTORIES )┊.´-★☆★
-# SRC_DIR	=	src
-# OBJ_DIR	=	obj
-
-# # -->┊( SOURCE AND OBJS )┊.´-★☆★
-# SOURCE	=	main.cpp PmergeMe.cpp
-
-# SRC		=	$(addprefix $(SRC_DIR)/, $(SOURCE))
-# OBJS	=	$(addprefix $(OBJ_DIR)/, $(SOURCE:.cpp=.o))
+# -->┊( VARIABLES )┊.´-★☆★
+NAME = raquels-inception
+COMPOSE_LOCATION = .
 
 
-# # -->┊( COMPILATION RULES )┊.´-★☆★
-all:
-	echo hello
+# -->┊( STANDARD RULES )┊.´-★☆★
+all: build up
 
-# $(NAME): $(OBJS)
-# 	$(M_COMOBJS)
-# 	$(M_COM)
-# 	@$(CXX) $(CXXFLAGS) $(OBJS) -o $(NAME)
+build:
+	docker compose build
+	$(M_BUILD)
 
-# $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp | $(OBJ_DIR)
-# 	@$(CXX) $(CXXFLAGS) -c $< -o $@
+up:
+	docker compose up -d
+	$(M_UP)
+	$(M_START)
 
-# $(OBJ_DIR):
-# 	@mkdir -p $(OBJ_DIR)
+start:
+	docker compose start
+	$(M_START)
+
+fclean: down destroy
+	$(M_CLEAN)
+
+down:
+	docker compose down
+	$(M_DOWN)
+
+destroy:
+	docker compose down -v
+
+stop:
+	docker compose stop
+
+restart: stop up
+	docker compose up -d
+
+re:	fclean all
+	$(M_RE)
 
 
-# # -->┊( STANDARD RULES )┊.´-★☆★
-# clean:
-# 	$(M_REMOBJS)
-# 	@rm -rf $(OBJ_DIR)
+# -->┊( UTIL RULES )┊.´-★☆★
+logs:
+	docker compose logs --tail=100 -f
 
-# fclean: clean
-# 	$(M_REM)
-# 	@rm -rf $(NAME)
+ps:
+	docker compose ps
 
-# re:	fclean all
-# 	$(M_RE)
+help:
+	@echo "do you feel helped?"
 
-
-# # -->┊( EXECUTION RULES )┊.´-★☆★
-# exe: all
-# 	./$(NAME)
-
-# rexe: re
-# 	@echo "\n"
-# 	./$(NAME)
-# val: all
-# 	$(VAL) ./$(NAME)
-
-# debug:
-# 	make all DEBUG=1
-# 	./$(NAME)
-
-# .PHONY: all clean fclean re exe rexe debug
-
+.PHONY: all build up start down stop destroy restart logs ps help
 
 # -->┊( COSMETICS )┊.´-★☆★
 
@@ -83,8 +70,9 @@ YELB	=	\e[43m
 BLUB	=	\e[44m
 
 #-‵,┊ messages
-M_COMOBJS	= @echo "$(BLK)-->┊$(GRN)  Compiling: $(BBLU)$(NAME)/objs $(BLK)$(DEF)"
-M_COM		= @echo "$(BLK)-->┊$(GRN)  Compiling: $(DEF)$(BLUB) $(NAME) $(BLK)$(DEF)\n"
-M_REMOBJS	= @echo "$(BLK)-->┊$(BLU)  Removing: $(BBLU) $(NAME)/objs $(BLK)$(DEF)"
-M_REM		= @echo "$(BLK)-->┊$(BLU)  Removing:  $(DEF)$(BLUB) $(NAME) $(BLK)$(DEF)\n"
-M_RE		= @echo "$(BLK)... $(BLU)  Re Done   $(DEF)$(BCYN) ($(NAME) is ready !!)$(DEF)"
+M_BUILD		= @echo "\n$(BLK)-->┊$(GRN)  Built: $(BBLU)image for $(NAME) $(BLK)$(DEF)\n"
+M_UP		= @echo "\n$(BLK)-->┊$(GRN)  Created: $(BBLU)$(NAME) container$(BLK)$(DEF)"
+M_START		= @echo   "$(BLK)-->┊$(GRN)  Started: $(DEF)$(BLUB) $(NAME) container $(BLK)$(DEF)\n"
+M_DOWN		= @echo "\n$(BLK)-->┊$(BLU)  Downed:	$(DEF)$(BLUB) $(NAME) container$(BLK)$(DEF)\n"
+M_CLEAN		= @echo "\n$(BLK)-->┊$(GRN)  Removed: $(DEF)$(BLUB) $(NAME) $(BLK)$(DEF)\n"
+M_RE		= @echo "\n$(BLK)... $(BLU)  Re Done:	$(DEF)$(BCYN) $(NAME) is ready !!$(DEF)"

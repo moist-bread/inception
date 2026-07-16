@@ -1,0 +1,7 @@
+services:
+  server:
+    build: ./testingengine
+    image: mynginx_image1
+    container_name: mynginx3
+    ports:
+      - 8080:80
