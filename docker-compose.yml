@@ -1,7 +1,14 @@
 services:
-  server:
-    build: ./testingengine
-    image: mynginx_image1
-    container_name: mynginx3
+  nginx:
+    build: ./services/nginx
+    image: i_nginx
+    container_name: nginx-server-service
+    ports:
+      - 8080:80
+
+  mariadb:
+    build: ./services/mariadb
+    image: i_mariadb
+    container_name: mariadb-database-service
     ports:
       - 8080:80
