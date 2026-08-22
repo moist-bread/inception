@@ -1,48 +1,41 @@
 #!/bin/bash
-echo "mariadb setup script..."
 
-# decide if its necessary to check for the mysql/mysql directory???
-# if not, just install right away
+# if the new database hasn't been created yet
+if ! [ -d "/var/lib/mysql/wordpress" ]; # ----- hard coded, change later
+then
+	echo "first start up!!"
+	echo "starting mariadb to begin setup..."
 
-# see if any more flags are necessary
-# mariadb-install-db
+	# start mdb as a background process
+	mariadbd-safe --port=3306 --bind-address=0.0.0.0 --datadir=/var/lib/mysql --socket=/run/mysqld/mysqld.sock & # ----- hard coded, change later
+	background_mdb_pid="$!"
 
-# decide if service start is enough or if its better to mariadbd-safe
-# service mariadb start
-# mariadbd-safe --port=3306 --bind-address=0.0.0.0 --datadir=/var/lib/mysql
+    until mariadb-admin ping --silent;
+	do
+        echo "waiting ping..."
+        sleep 1
+    done
 
-# see if waiting for mariadb being up is needed
+    echo "mariadb has started"
+	echo "beggining setup..."
 
+	# !! decide if -u root is needed
+	echo "creating database..."
+	mariadb -e "CREATE DATABASE IF NOT EXISTS \`wordpress\`;" # ----- hard coded, change later
 
+	# create new user, give priveleges to user, apply privilege changes
+	echo "taking care of user settings..."
+	mariadb -e "
+	CREATE USER IF NOT EXISTS \`rduro-pe\`@'%' IDENTIFIED BY '123'; # ----- hard coded, change later
+	GRANT ALL PRIVILEGES ON wordpress.* TO \`rduro-pe\`@'%';  # ----- hard coded, change later
+	FLUSH PRIVILEGES;"
+	
+	echo "finished setup!"
+	echo "shutting down mariadb to restart..."
 
-# decide if its necessary to check for the DATABASE directory
-# if not, just create and setup everything right away
-# also decide if -u root is needed
-
-echo "creating database."
-# mariadb -u root -e "CREATE DATABASE IF NOT EXISTS \`${MYSQL_DATABASE}\`;"
-# mariadb -e "CREATE DATABASE IF NOT EXISTS \`${MYSQL_DATABASE}\`;"
-
-echo "taking care of user settings."
-# mariadb -u root -e "CREATE USER IF NOT EXISTS '${MYSQL_USER}'@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';"
-# mariadb -e "CREATE USER IF NOT EXISTS \`${MYSQL_USER}\`@'%' IDENTIFIED BY '${MYSQL_PASSWORD}';"
-
-# mariadb -u root -e "GRANT ALL PRIVILEGES ON \`${MYSQL_DATABASE}\`.* TO '${MYSQL_USER}'@'%';"
-# mariadb -e "GRANT ALL PRIVILEGES ON ${MYSQL_DATABASE}.* TO \`${MYSQL_USER}\`@'%';"
-
-# decide if its necessary to alter user root???
-# mariadb -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';"
-
-# decide if flush is needed
-# mariadb -e "FLUSH PRIVILEGES;"
-
-# mariadb-admin -u root -p"${MYSQL_ROOT_PASSWORD}" shutdown
-
-# see if waiting for shutdown is needed
-
+	mariadb-admin -u root -p"123456" shutdown
+	wait "$background_mdb_pid"
+fi
 
 echo "starting mariadb!!"
-
-# see if the mariadb-safe version works
-# mariadbd-safe --port=3306 --bind-address=0.0.0.0 --datadir=/var/lib/mysql
-# mysqld_safe --port=3306 --bind-address=0.0.0.0 --datadir=/var/lib/mysql
+mariadbd-safe --port=3306 --bind-address=0.0.0.0 --datadir=/var/lib/mysql --socket=/run/mysqld/mysqld.sock # ----- hard coded, change later

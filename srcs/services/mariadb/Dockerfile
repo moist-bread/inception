@@ -11,4 +11,7 @@ COPY --chmod=+x mdb_setup.sh /usr/local/bin/
 
 EXPOSE 3306
 
-ENTRYPOINT ["/usr/local/bin/mdb_setup.sh"]
+# debug version
+ENTRYPOINT ["bash", "-x", "/usr/local/bin/mdb_setup.sh"]
+
+#ENTRYPOINT ["/usr/local/bin/mdb_setup.sh"]

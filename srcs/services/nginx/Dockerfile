@@ -3,8 +3,8 @@
 ARG VERSION=oldstable
 FROM debian:${VERSION}
 
-RUN apt-get update -y && apt-get upgrade -y 
-RUN apt-get install nginx -y
+RUN apt-get -y update && \
+	apt-get install -y --no-install-recommends nginx
 
 # RUN rm /etc/nginx/conf.d/default.conf
 
