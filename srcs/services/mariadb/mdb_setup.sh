@@ -38,4 +38,4 @@ then
 fi
 
 echo "starting mariadb!!"
-mariadbd-safe --port=3306 --bind-address=0.0.0.0 --datadir=/var/lib/mysql --socket=/run/mysqld/mysqld.sock # ----- hard coded, change later
+exec mariadbd-safe --port=3306 --bind-address=0.0.0.0 --datadir=/var/lib/mysql --socket=/run/mysqld/mysqld.sock # ----- hard coded, change later
