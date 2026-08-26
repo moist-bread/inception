@@ -7,6 +7,7 @@ RUN apt-get -y update && \
 	php8.2 \
 	php8.2-fpm \
 	php8.2-mysql \
+	ca-certificates \
 	mariadb-client
 
 # install wordpress' command-line interface
@@ -15,6 +16,7 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
 	mv wp-cli.phar /usr/local/bin/wp
 
 # download wordpress
+RUN mkdir -p /var/www/html/wordpress
 RUN wp core download --allow-root --path="/var/www/html/wordpress"
 
 # download and extract wordpress

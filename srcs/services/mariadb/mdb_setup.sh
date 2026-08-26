@@ -37,5 +37,6 @@ then
 	wait "$background_mdb_pid"
 fi
 
+# !! ISSUE HERE: NOT EXITING GRACEFULLY
 echo "starting mariadb!!"
 exec mariadbd-safe --port=3306 --bind-address=0.0.0.0 --datadir=/var/lib/mysql --socket=/run/mysqld/mysqld.sock # ----- hard coded, change later

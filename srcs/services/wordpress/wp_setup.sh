@@ -1,28 +1,32 @@
 #!/bin/bash
 
 # ----- hard coded, change later
-until mariadb -u"rduro-pe" -p"123" -P "3306" "$MYSQL_DATABASE" -e "SELECT wordpress;" >/dev/null 2>&1; do
-    echo "Waiting for MariaDB..."
-    sleep 1
-done
+# !! ISSUES HERE: "ERROR 2002 (HY000): Can't connect to server on 'localhost' (111)"
+#mariadb -u"rduro-pe" -p"123" -P "3306" "wordpress" -e "SELECT 1;"
+#until mariadb -u"rduro-pe" -p"123" -P "3306" "wordpress" -e "SELECT 1;" >/dev/null 2>&1; do
+echo "Waiting for MariaDB..."
+sleep 10
+#done
 
 if ! [ -f /var/www/html/wordpress/wp-config.php ];
 then
 	echo "first start up!!"
 	echo "installing and configuring worpress..."
 	
+	cd /var/www/html/wordpress
 	# ----- hard coded, change later
 	wp config create \
 		--allow-root \
 		--dbname=wordpress \
 		--dbuser=rduro-pe \
-		--dbpass=123456 \
+		--dbpass=123 \
 		--dbhost=mariadb:3306
 	
 	# ----- hard coded, change later
+	# !! ISSUE: correct server_name not working yet 
 	wp core install \
 		--allow-root \
-		--url=rduro-pe.42.fr \
+		--url=localhost \
 		--title=raquel-inception \
 		--admin_user=manager \
 		--admin_password=manager123 \

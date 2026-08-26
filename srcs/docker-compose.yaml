@@ -1,0 +1,66 @@
+name: rduro-pe_inception
+
+services:
+  mariadb:
+    build: ./services/mariadb
+    image: mariadb_img
+    container_name: mariadb_cont
+    networks:
+      - inception_network
+    volumes:
+      - mariadb_vol:/var/lib/mysql
+    #environment:
+    #  - MARIADB_HOST=${MARIADB_HOST}
+    #  - MARIADB_PORT=${REDIS_PORT}
+    restart: always
+    # env_file: .env
+
+  wordpress:
+    build: ./services/wordpress
+    image: wordpress_img
+    container_name: wordpress_cont
+    depends_on:
+      - mariadb
+    networks:
+      - inception_network
+    volumes:
+      - wordpress_vol:/var/www/html
+    restart: always
+    # env_file: .env
+
+  nginx:
+    build: ./services/nginx
+    image: nginx_img
+    container_name: nginx_cont
+    ports:
+      - 443:443
+    depends_on:
+      - wordpress
+    networks:
+      - inception_network
+    volumes:
+      - wordpress_vol:/var/www/html
+    restart: always
+    # env_file: .env
+
+networks:
+  inception_network:
+    driver: bridge
+
+volumes:
+  mariadb_vol:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./services/mariadb/data
+  wordpress_vol:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./services/wordpress/data
+
+
+
+#secrets:
