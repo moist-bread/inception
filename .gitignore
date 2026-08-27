@@ -12,3 +12,4 @@
 .env
 srcs/services/mariadb/data/
 srcs/services/wordpress/data/
+srcs/secrets

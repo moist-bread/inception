@@ -1,39 +1,48 @@
 # -->┊( VARIABLES )┊.´-★☆★
-NAME = raquels-inception
-COMPOSE_LOCATION = .
-
+NAME = inception_rduro-pe
+YAML_PATH = ./srcs/docker-compose.yaml
 
 # -->┊( STANDARD RULES )┊.´-★☆★
-all: build up
+all: up
 
-build:
-	docker compose build
+setup:
+	@chmod +x var_setup.sh
+	@bash var_setup.sh
+	$(M_SETUP)
+
+build: setup
+	docker compose -f $(YAML_PATH) build
 	$(M_BUILD)
 
-up:
-	docker compose up -d
+up: build
+	mkdir -p ./srcs/services/mariadb/data ./srcs/services/wordpress/data
+	docker compose -f $(YAML_PATH) up -d
 	$(M_UP)
 	$(M_START)
 
 start:
-	docker compose start
+	docker compose -f $(YAML_PATH) start
 	$(M_START)
+
+stop:
+	docker compose -f $(YAML_PATH) stop
+#docker stop $(docker ps -qa)
 
 fclean: down destroy
 	$(M_CLEAN)
+	@rm -rf ./srcs/secrets ./srcs/.env
+	$(M_SET_CLEAN)
 
 down:
-	docker compose down
+	docker compose -f $(YAML_PATH) down
 	$(M_DOWN)
 
 destroy:
-	docker compose down -v
+	docker compose -f $(YAML_PATH) down -v
 
-stop:
-	docker compose stop
 
 restart: stop up
-	docker compose up -d
+	docker compose -f $(YAML_PATH) up -d
 
 re:	fclean all
 	$(M_RE)
@@ -41,10 +50,10 @@ re:	fclean all
 
 # -->┊( UTIL RULES )┊.´-★☆★
 logs:
-	docker compose logs --tail=100 -f
+	docker compose -f $(YAML_PATH) logs --tail=100 -f
 
 ps:
-	docker compose ps
+	docker compose -f $(YAML_PATH) ps
 
 help:
 	@echo "do you feel helped?"
@@ -70,9 +79,11 @@ YELB	=	\e[43m
 BLUB	=	\e[44m
 
 #-‵,┊ messages
+M_SETUP		= @echo "\n$(BLK)-->┊$(GRN)  Setup: $(BBLU)created .env and secrets$(BLK)$(DEF)\n"
 M_BUILD		= @echo "\n$(BLK)-->┊$(GRN)  Built: $(BBLU)image for $(NAME) $(BLK)$(DEF)\n"
 M_UP		= @echo "\n$(BLK)-->┊$(GRN)  Created: $(BBLU)$(NAME) container$(BLK)$(DEF)"
 M_START		= @echo   "$(BLK)-->┊$(GRN)  Started: $(DEF)$(BLUB) $(NAME) container $(BLK)$(DEF)\n"
 M_DOWN		= @echo "\n$(BLK)-->┊$(BLU)  Downed:	$(DEF)$(BLUB) $(NAME) container$(BLK)$(DEF)\n"
-M_CLEAN		= @echo "\n$(BLK)-->┊$(GRN)  Removed: $(DEF)$(BLUB) $(NAME) $(BLK)$(DEF)\n"
+M_CLEAN		= @echo "\n$(BLK)-->┊$(GRN)  Removed: $(DEF)$(BLUB) $(NAME) $(BLK)$(DEF)"
+M_SET_CLEAN	= @echo "$(BLK)-->┊$(GRN)  Removed: $(DEF)$(BLUB) .env and secrets $(BLK)$(DEF)\n"
 M_RE		= @echo "\n$(BLK)... $(BLU)  Re Done:	$(DEF)$(BCYN) $(NAME) is ready !!$(DEF)"

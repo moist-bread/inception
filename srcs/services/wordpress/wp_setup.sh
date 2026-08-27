@@ -17,8 +17,8 @@ then
 	# ----- hard coded, change later
 	wp config create \
 		--allow-root \
-		--dbname=wordpress \
-		--dbuser=rduro-pe \
+		--dbname=$DATABASE_NAME \
+		--dbuser=$DATABASE_USER \
 		--dbpass=123 \
 		--dbhost=mariadb:3306
 	
@@ -27,19 +27,19 @@ then
 	wp core install \
 		--allow-root \
 		--url=localhost \
-		--title=raquel-inception \
-		--admin_user=manager \
+		--title=$TITLE \
+		--admin_user=$WP_ADMIN \
 		--admin_password=manager123 \
-		--admin_email=manager@gmail.com \
+		--admin_email=$WP_ADMIN_EMAIL \
 		--skip-email
 	
 	# ----- hard coded, change later
-	wp user create "visitor" "visitor@gmail.com" \
+	wp user create $WP_USER $WP_USER_EMAIL \
 		--allow-root \
 		--user_pass="visitor456" \
 		--role=author 
 	
-	wp theme install twentyten --allow-root --activate
+	wp theme install twentyten --allow-root --activate # ----- hard coded, change later
 fi
 
 echo "starting wordpress!!"
