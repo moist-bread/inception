@@ -14,32 +14,33 @@ then
 	echo "installing and configuring worpress..."
 	
 	cd /var/www/html/wordpress
-	# ----- hard coded, change later
+
+	MDB_PASS=$(cat /run/secrets/mdb_pass)
+	WP_PASS=$(cat /run/secrets/wp_pass)
+	WP_ADMIN_PASS=$(cat /run/secrets/wp_admin_pass)
+	
 	wp config create \
 		--allow-root \
 		--dbname=$DATABASE_NAME \
 		--dbuser=$DATABASE_USER \
-		--dbpass=123 \
-		--dbhost=mariadb:3306
+		--dbpass=$MDB_PASS \
+		--dbhost=mariadb:$DATABASE_PORT
 	
-	# ----- hard coded, change later
-	# !! ISSUE: correct server_name not working yet 
 	wp core install \
 		--allow-root \
-		--url=localhost \
+		--url=$URL \
 		--title=$TITLE \
 		--admin_user=$WP_ADMIN \
-		--admin_password=manager123 \
+		--admin_password=$WP_ADMIN_PASS \
 		--admin_email=$WP_ADMIN_EMAIL \
 		--skip-email
 	
-	# ----- hard coded, change later
 	wp user create $WP_USER $WP_USER_EMAIL \
 		--allow-root \
-		--user_pass="visitor456" \
+		--user_pass=$WP_PASS \
 		--role=author 
 	
-	wp theme install twentyten --allow-root --activate # ----- hard coded, change later
+	wp theme install $THEME --allow-root --activate
 fi
 
 echo "starting wordpress!!"

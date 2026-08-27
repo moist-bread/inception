@@ -1,6 +1,6 @@
 # -->┊( VARIABLES )┊.´-★☆★
 NAME = inception_rduro-pe
-YAML_PATH = ./srcs/docker-compose.yaml
+YAML_PATH = ./srcs/docker-compose.yml
 
 # -->┊( STANDARD RULES )┊.´-★☆★
 all: up
@@ -8,6 +8,7 @@ all: up
 setup:
 	@chmod +x var_setup.sh
 	@bash var_setup.sh
+	@sudo cat /etc/hosts | grep rduro-pe.42.fr > /dev/null || sudo sh -c "echo '127.0.0.1 rduro-pe.42.fr' >> /etc/hosts"
 	$(M_SETUP)
 
 build: setup
@@ -15,14 +16,15 @@ build: setup
 	$(M_BUILD)
 
 up: build
-	mkdir -p ./srcs/services/mariadb/data ./srcs/services/wordpress/data
-	docker compose -f $(YAML_PATH) up -d
+	mkdir -p /home/rduro-pe/data/mariadb /home/rduro-pe/data/wordpress
+# 	mkdir -p ./srcs/services/mariadb/data ./srcs/services/wordpress/data
 	$(M_UP)
 	$(M_START)
+	docker compose -f $(YAML_PATH) up
 
 start:
-	docker compose -f $(YAML_PATH) start
 	$(M_START)
+	docker compose -f $(YAML_PATH) start
 
 stop:
 	docker compose -f $(YAML_PATH) stop
@@ -30,7 +32,10 @@ stop:
 
 fclean: down destroy
 	$(M_CLEAN)
-	@rm -rf ./srcs/secrets ./srcs/.env
+	docker system prune -a -f --volumes
+	@sudo rm -rf ./srcs/secrets ./srcs/.env
+	@sudo rm -rf /home/rduro-pe/data/mariadb /home/rduro-pe/data/wordpress
+# 	@sudo rm -rf ./srcs/services/mariadb/data ./srcs/services/wordpress/data
 	$(M_SET_CLEAN)
 
 down:
@@ -79,7 +84,7 @@ YELB	=	\e[43m
 BLUB	=	\e[44m
 
 #-‵,┊ messages
-M_SETUP		= @echo "\n$(BLK)-->┊$(GRN)  Setup: $(BBLU)created .env and secrets$(BLK)$(DEF)\n"
+M_SETUP		= @echo "\n$(BLK)-->┊$(GRN)  Setup: $(BBLU)created domain, .env and secrets$(BLK)$(DEF)\n"
 M_BUILD		= @echo "\n$(BLK)-->┊$(GRN)  Built: $(BBLU)image for $(NAME) $(BLK)$(DEF)\n"
 M_UP		= @echo "\n$(BLK)-->┊$(GRN)  Created: $(BBLU)$(NAME) container$(BLK)$(DEF)"
 M_START		= @echo   "$(BLK)-->┊$(GRN)  Started: $(DEF)$(BLUB) $(NAME) container $(BLK)$(DEF)\n"

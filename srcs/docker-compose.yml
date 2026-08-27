@@ -1,5 +1,3 @@
-name: rduro-pe_inception
-
 services:
   mariadb:
     build: ./services/mariadb
@@ -9,11 +7,11 @@ services:
       - inception_network
     volumes:
       - mariadb_vol:/var/lib/mysql
-    #environment:
-    #  - MARIADB_HOST=${MARIADB_HOST}
-    #  - MARIADB_PORT=${REDIS_PORT}
     restart: always
-    # env_file: .env
+    env_file: .env
+    secrets:
+      - mdb_pass
+      - mdb_root_pass
 
   wordpress:
     build: ./services/wordpress
@@ -26,8 +24,13 @@ services:
     volumes:
       - wordpress_vol:/var/www/html
     restart: always
-    # env_file: .env
-
+    env_file: .env
+    secrets:
+      - mdb_pass
+      - mdb_root_pass
+      - wp_pass
+      - wp_admin_pass
+  
   nginx:
     build: ./services/nginx
     image: nginx_img
@@ -41,7 +44,6 @@ services:
     volumes:
       - wordpress_vol:/var/www/html
     restart: always
-    # env_file: .env
 
 networks:
   inception_network:
@@ -53,14 +55,22 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: ./services/mariadb/data
+      device: /home/rduro-pe/data/mariadb
+      # device: ./services/mariadb/data
   wordpress_vol:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: ./services/wordpress/data
+      device: /home/rduro-pe/data/wordpress
+      # device: ./services/wordpress/data
 
-
-
-#secrets:
+secrets:
+  mdb_pass:
+    file: ./secrets/mdb_pass
+  mdb_root_pass:
+    file: ./secrets/mdb_root_pass
+  wp_pass:
+    file: ./secrets/wp_pass
+  wp_admin_pass:
+    file: ./secrets/wp_admin_pass

@@ -14,9 +14,10 @@ then
 	echo -n $(pass_gen) > ./secrets/wp_admin_pass
 fi
 
+intra_user=rduro-pe
+
 if ! [ -f "./.env" ];
 then
-	intra_user=rduro-pe
 
 	echo DATABASE_NAME=wordpress >> ./.env
 	echo DATABASE_PORT=3306 >> ./.env

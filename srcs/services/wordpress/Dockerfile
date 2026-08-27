@@ -19,11 +19,6 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
 RUN mkdir -p /var/www/html/wordpress
 RUN wp core download --allow-root --path="/var/www/html/wordpress"
 
-# download and extract wordpress
-# RUN curl -O https:://wordpress.org/latest.tar.gz && \
-# 	tar -xzvf latest.tar.gz && \
-# 	rm -rf latest.tar.gz
-
 RUN mkdir -p /run/php
 
 # edit the conf file to have the new port

@@ -19,12 +19,10 @@ RUN openssl req -x509 \
 	-newkey rsa:2048 \
 	-keyout /etc/nginx/ssl/ssl.key \
 	-out /etc/nginx/ssl/ssl.pem \
-	-subj "/C=PT/L=LX/O=42/CN=localhost"
-# !! ISSUE: correct server_name not working yet 
+	-subj "/C=PT/L=LX/O=42/CN=rduro-pe.42.fr"
 
-COPY content /usr/share/nginx/html
 COPY conf /etc/nginx
 
-EXPOSE 80
+EXPOSE 443
 
 ENTRYPOINT ["nginx", "-g", "daemon off;"]
