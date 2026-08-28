@@ -29,7 +29,7 @@ COPY --chmod=+x wp_setup.sh /usr/local/bin/
 
 EXPOSE 9000
 
+#ENTRYPOINT ["/usr/local/bin/wp_setup.sh"]
+
 # debug version
 ENTRYPOINT ["bash", "-x", "/usr/local/bin/wp_setup.sh"]
-
-#ENTRYPOINT ["/usr/local/bin/wp_setup.sh"]

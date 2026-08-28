@@ -1,21 +1,27 @@
 #!/bin/bash
 
-# ----- hard coded, change later
-# !! ISSUES HERE: "ERROR 2002 (HY000): Can't connect to server on 'localhost' (111)"
-#mariadb -u"rduro-pe" -p"123" -P "3306" "wordpress" -e "SELECT 1;"
-#until mariadb -u"rduro-pe" -p"123" -P "3306" "wordpress" -e "SELECT 1;" >/dev/null 2>&1; do
-echo "Waiting for MariaDB..."
-sleep 10
-#done
+MDB_PASS=$(cat /run/secrets/mdb_pass)
+
+echo "waiting for needed database to be created..."
+
+until mariadb -u"$DATABASE_USER" -p"$MDB_PASS" -P"$DATABASE_PORT" \
+	-h"mariadb" -e \
+	"SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA \
+	WHERE SCHEMA_NAME = '$DATABASE_NAME';" > /dev/null;
+do
+	echo "waiting..."
+	sleep 2
+done
+
+echo "database is present!!"
 
 if ! [ -f /var/www/html/wordpress/wp-config.php ];
 then
-	echo "first start up!!"
+	echo "first wordpress start up!!"
 	echo "installing and configuring worpress..."
 	
 	cd /var/www/html/wordpress
 
-	MDB_PASS=$(cat /run/secrets/mdb_pass)
 	WP_PASS=$(cat /run/secrets/wp_pass)
 	WP_ADMIN_PASS=$(cat /run/secrets/wp_admin_pass)
 	

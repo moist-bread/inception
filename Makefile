@@ -1,5 +1,6 @@
 # -->┊( VARIABLES )┊.´-★☆★
-NAME = inception_rduro-pe
+USER=rduro-pe
+NAME = inception_$(USER)
 YAML_PATH = ./srcs/docker-compose.yml
 
 # -->┊( STANDARD RULES )┊.´-★☆★
@@ -8,7 +9,8 @@ all: up
 setup:
 	@chmod +x var_setup.sh
 	@bash var_setup.sh
-	@sudo cat /etc/hosts | grep rduro-pe.42.fr > /dev/null || sudo sh -c "echo '127.0.0.1 rduro-pe.42.fr' >> /etc/hosts"
+	@echo "sudo needed for adding domain to hosts"
+	@sudo cat /etc/hosts | grep $(USER).42.fr > /dev/null || sudo sh -c "echo '127.0.0.1 $(USER).42.fr' >> /etc/hosts"
 	$(M_SETUP)
 
 build: setup
@@ -16,27 +18,10 @@ build: setup
 	$(M_BUILD)
 
 up: build
-	mkdir -p /home/rduro-pe/data/mariadb /home/rduro-pe/data/wordpress
-# 	mkdir -p ./srcs/services/mariadb/data ./srcs/services/wordpress/data
+	@mkdir -p /home/$(USER)/data/mariadb /home/$(USER)/data/wordpress
 	$(M_UP)
 	$(M_START)
 	docker compose -f $(YAML_PATH) up
-
-start:
-	$(M_START)
-	docker compose -f $(YAML_PATH) start
-
-stop:
-	docker compose -f $(YAML_PATH) stop
-#docker stop $(docker ps -qa)
-
-fclean: down destroy
-	$(M_CLEAN)
-	docker system prune -a -f --volumes
-	@sudo rm -rf ./srcs/secrets ./srcs/.env
-	@sudo rm -rf /home/rduro-pe/data/mariadb /home/rduro-pe/data/wordpress
-# 	@sudo rm -rf ./srcs/services/mariadb/data ./srcs/services/wordpress/data
-	$(M_SET_CLEAN)
 
 down:
 	docker compose -f $(YAML_PATH) down
@@ -44,26 +29,37 @@ down:
 
 destroy:
 	docker compose -f $(YAML_PATH) down -v
+	docker compose -f $(YAML_PATH) down --rmi local
 
-
-restart: stop up
-	docker compose -f $(YAML_PATH) up -d
+fclean: down destroy
+	@docker system prune -a -f --volumes
+	$(M_CLEAN)
+	@echo "sudo needed to remove secrets/env and local volume data"
+	@sudo rm -rf ./srcs/secrets ./srcs/.env
+	@sudo rm -rf /home/$(USER)/data/mariadb /home/$(USER)/data/wordpress
+	$(M_SET_CLEAN)
 
 re:	fclean all
 	$(M_RE)
 
-
 # -->┊( UTIL RULES )┊.´-★☆★
+
+start:
+	$(M_START)
+	docker compose -f $(YAML_PATH) start
+
+stop:
+	docker compose -f $(YAML_PATH) stop
+
+restart: stop up
+
 logs:
-	docker compose -f $(YAML_PATH) logs --tail=100 -f
+	docker compose -f $(YAML_PATH) logs --tail=25 -f
 
 ps:
 	docker compose -f $(YAML_PATH) ps
 
-help:
-	@echo "do you feel helped?"
-
-.PHONY: all build up start down stop destroy restart logs ps help
+.PHONY: all setup build up down destroy fclean start stop restart logs ps
 
 # -->┊( COSMETICS )┊.´-★☆★
 
@@ -87,7 +83,7 @@ BLUB	=	\e[44m
 M_SETUP		= @echo "\n$(BLK)-->┊$(GRN)  Setup: $(BBLU)created domain, .env and secrets$(BLK)$(DEF)\n"
 M_BUILD		= @echo "\n$(BLK)-->┊$(GRN)  Built: $(BBLU)image for $(NAME) $(BLK)$(DEF)\n"
 M_UP		= @echo "\n$(BLK)-->┊$(GRN)  Created: $(BBLU)$(NAME) container$(BLK)$(DEF)"
-M_START		= @echo   "$(BLK)-->┊$(GRN)  Started: $(DEF)$(BLUB) $(NAME) container $(BLK)$(DEF)\n"
+M_START		= @echo   "$(BLK)-->┊$(GRN)  Starting: $(DEF)$(BLUB) $(NAME) container $(BLK)$(DEF)\n"
 M_DOWN		= @echo "\n$(BLK)-->┊$(BLU)  Downed:	$(DEF)$(BLUB) $(NAME) container$(BLK)$(DEF)\n"
 M_CLEAN		= @echo "\n$(BLK)-->┊$(GRN)  Removed: $(DEF)$(BLUB) $(NAME) $(BLK)$(DEF)"
 M_SET_CLEAN	= @echo "$(BLK)-->┊$(GRN)  Removed: $(DEF)$(BLUB) .env and secrets $(BLK)$(DEF)\n"
