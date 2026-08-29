@@ -58,8 +58,13 @@ logs:
 
 ps:
 	docker compose -f $(YAML_PATH) ps
+	@echo ""
 
-.PHONY: all setup build up down destroy fclean start stop restart logs ps
+healthcheck: ps logs
+	@echo ""
+	@curl -k https://$(USER).42.fr | head -5
+
+.PHONY: all setup build up down destroy fclean start stop restart logs ps healthcheck
 
 # -->┊( COSMETICS )┊.´-★☆★
 
