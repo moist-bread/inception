@@ -87,6 +87,12 @@ make logs
 make ps
 ```
 
+A useful docker command is:
+
+```jsx
+docker exec -it (container name) /bin/sh
+```
+
 ## STORING PROJECT DATA
 
 The project data is stored in the `/home/$(USER)/data/mariadb` and `/home/$(USER)/data/wordpress` directories in the host machine. Those folders are created by the Makefile when building and only get deleted when doing `make fclean` (or `make re`). In all other cases the data persists and is used by the WordPress and MariaDB containers via their respective docker volumes created in the docker compose.

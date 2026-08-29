@@ -54,7 +54,7 @@ stop:
 restart: stop up
 
 logs:
-	docker compose -f $(YAML_PATH) logs --tail=25 -f
+	docker compose -f $(YAML_PATH) logs | tail
 
 ps:
 	docker compose -f $(YAML_PATH) ps
@@ -62,7 +62,7 @@ ps:
 
 healthcheck: ps logs
 	@echo ""
-	@curl -k https://$(USER).42.fr | head -5
+	@curl -k https://$(USER).42.fr | tail -4
 
 .PHONY: all setup build up down destroy fclean start stop restart logs ps healthcheck
 
