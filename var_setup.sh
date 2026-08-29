@@ -18,8 +18,7 @@ intra_user=rduro-pe
 
 if ! [ -f "./.env" ];
 then
-
-	echo DATABASE_NAME=wordpress >> ./.env
+	echo DATABASE_NAME=wordpress > ./.env
 	echo DATABASE_PORT=3306 >> ./.env
 	echo DATABASE_USER=db_$intra_user >> ./.env
 	echo "" >> ./.env

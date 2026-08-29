@@ -56,14 +56,12 @@ volumes:
       type: none
       o: bind
       device: /home/rduro-pe/data/mariadb
-      # device: ./services/mariadb/data
   wordpress_vol:
     driver: local
     driver_opts:
       type: none
       o: bind
       device: /home/rduro-pe/data/wordpress
-      # device: ./services/wordpress/data
 
 secrets:
   mdb_pass:

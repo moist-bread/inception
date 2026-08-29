@@ -7,10 +7,8 @@ then
 	echo "starting mariadb to begin setup..."
 
 	# start mdb as a background process
-	mariadbd-safe -u root --port=$DATABASE_PORT \
-		--bind-address=0.0.0.0 \
-		--datadir=/var/lib/mysql \
-		--socket=/run/mysqld/mysqld.sock &
+	mariadbd-safe -u root --port=$DATABASE_PORT --bind-address=0.0.0.0 \
+		--datadir=/var/lib/mysql --socket=/run/mysqld/mysqld.sock &
 	background_mdb_pid="$!"
 
     until mariadb-admin ping --silent;
@@ -37,14 +35,10 @@ then
 	
 	echo "finished setup!"
 	echo "shutting down mariadb to restart..."
-
 	mariadb-admin -u root -p"${MDB_ROOT_PASS}" shutdown
 	wait "$background_mdb_pid"
 fi
 
-# !! ISSUE HERE: NOT EXITING GRACEFULLY
 echo "starting mariadb!!"
-exec mariadbd -u root --port=$DATABASE_PORT \
-		--bind-address=0.0.0.0 \
-		--datadir=/var/lib/mysql \
-		--socket=/run/mysqld/mysqld.sock
+exec mariadbd -u root --port=$DATABASE_PORT --bind-address=0.0.0.0 \
+	--datadir=/var/lib/mysql --socket=/run/mysqld/mysqld.sock
