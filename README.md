@@ -112,7 +112,7 @@ The **`Dockerfile`** works in layers, each instruction will add a new layer to t
 
 **`*union filesystems`** (OverlayFS):* is created when a container is run from an image and creates a directory for the container. it stacks the layers on top of each other to create a new unified view. [[How Docker Works Internally](https://letsbuildsolutions.com/blog/devops/how-docker-works-internally-namespaces-cgroups-union-filesystems-and-the-oci-runtime/)]
 
-when multiple containers are needed, **docker compose** is helpful ****to connect them.
+when multiple containers are needed, **docker compose** is helpful to connect them.
 
 [dockerfile]   `*docker build*`   [image]   `*docker run*`   [container]
 
@@ -132,15 +132,15 @@ a **`Dockerfile`** has a set of ***instructions*** that serve to perform all the
 
 *starter instructions*:
 
-- **`*parser directives*`:** settings for the Dockerfile parser (at top of file);
+- **`parser directives`:** settings for the Dockerfile parser (at top of file);
 - **`ARG`:** global variables, can be used in FROM (to use after, (re)declare after). can be overwritten by ENV. whenever the value of an ARG changes it performs a cache miss on use [[Dockerfile –cache-hit-miss flag](https://dockerpros.com/wiki/dockerfile-cache-hit-miss/)];
 - **`FROM`:** start built with a base image to work from (ex.: OS).
 
 **`shell and exec form`** are the two syntaxes to write commands for instructions RUN, CMD and ENTRYPOINT.
 
-**`shell** form` is written like a regular string (ex.: a b), it’s better for longer commands and readability. it’s possible to escape the commands into multiple lines. the default command shell (/bin/sh) can be changed with the SHELL instruction (written in exec form).
+`**shell** form` is written like a regular string (ex.: a b), it’s better for longer commands and readability. it’s possible to escape the commands into multiple lines. the default command shell (/bin/sh) can be changed with the SHELL instruction (written in exec form).
 
-**`exec** form` is in JSON array syntax (ex.: [“a”, ”b”]), it’s better for ENTRYPOINT and setting default arguments with CMD. it’s also possible to specify a specific command shell, if none is specified it can’t perform expansions.
+`**exec** form` is in JSON array syntax (ex.: [“a”, ”b”]), it’s better for ENTRYPOINT and setting default arguments with CMD. it’s also possible to specify a specific command shell, if none is specified it can’t perform expansions.
 
 **`here-documents`** can be used to send the lines following as input for RUN or COPY.
 
@@ -148,7 +148,7 @@ a **`Dockerfile`** has a set of ***instructions*** that serve to perform all the
 
 - **`RUN`:** executes commands and creates new layers in the image at built time;
 - **`CMD`:** sets the command to be executed in the running container. only one CMD instruction is executed from the Dockerfile, the last one. if there is no executable it can count as a default for the ENTRYPOINT but if the user specifies arguments to *docker run* then they will override the CMD ones [[Understand how CMD and ENTRYPOINT interact](https://docs.docker.com/reference/dockerfile#understand-how-cmd-and-entrypoint-interact)];
-- **`COPY`:** copies a local file from *srcs* (as many args are desired) **to the image’s filesystem at *dest* (last argument). supports copying from build stages. also relevant is the --chmod flag (ex.: “--chmod=777”, “--chmod=+x”) that changes the files’ mode;
+- **`COPY`:** copies a local file from *srcs* (as many args are desired) to the image’s filesystem at *dest* (last argument). supports copying from build stages. also relevant is the --chmod flag (ex.: “--chmod=777”, “--chmod=+x”) that changes the files’ mode;
 - **`ADD`:** like COPY but doesn't do build stages. instead it can extract .tar files, and get files from urls and gits.
 
 *ending instructions*:
@@ -164,6 +164,48 @@ a **`Dockerfile`** has a set of ***instructions*** that serve to perform all the
 - **`exec`:** use for the last command inside helper scripts to replace the bash process as PID1 so it can detect Unix signals (ie.: SIGTERM). [[Understanding PID 1](https://linuxvox.com/blog/in-linux-what-process-has-the-pid-of-1/), [Uses of the Exec Command in Shell Script](https://www.baeldung.com/linux/exec-command-in-shell-script)]
 
 ---
+</details>
+
+<details>
+<summary><b>Using Docker and Related Concepts</b></summary>
+
+---
+
+#### Introductions to Docker
+
+[Docker in 100 Seconds (video)](https://www.youtube.com/watch?v=Gjnup-PuquQ)
+
+[The Only Docker Tutorial You Need To Get Started (video)](https://www.youtube.com/watch?v=DQdB7wFEygo)
+
+[Docker Crash Course for Absolute Beginners (video)](https://www.youtube.com/watch?v=pg19Z8LL06w)
+
+[Docker do Zero: O que eu faria diferente para aprender? (video)](https://youtu.be/Y6kz884AoME?si=gbADQkQLdLfwdBLk)
+
+***daemon* -** program that runs as a background process, rather than being under the direct control of an interactive user.
+
+---
+
+#### Other Resources
+
+[Install Docker Engine on Debian](https://docs.docker.com/engine/install/debian/)
+
+[Difference Between docker-compose up, down, stop, and start](https://stackoverflow.com/questions/46428420/difference-between-docker-compose-up-down-stop-and-start)
+
+[Storage | Docker Docs](https://docs.docker.com/engine/storage/)
+
+Useful Commands:
+
+- **docker pull (image to pull)**;
+- **docker images**;
+- **docker ps:** list running containers;
+- **docker run --name (container name) -d -p (host port):(container port) (image name):** give it a name, run detacked from terminal, bind hist port to a container port;
+- **docker logs/stop/start (CONTAINER ID or NAME)**;
+- **docker build -t (image name) (dockerfile folder path):** will follow the docker file instructions in the folder LOCATION and tag the image as NAME;
+- **docker stop (container name) && docker rm (container name) && docker rmi (image name)**;
+- **docker exec -it (container name) /bin/bash:** enter into the container filesystem [[How to Explore a Docker Container's File System](https://www.tutorialpedia.org/blog/exploring-docker-container-s-file-system/)].
+
+---
+
 </details>
 
 <details>
@@ -265,16 +307,167 @@ In **`TLS 1.2`** the handshake is made in 2 round trips whilst in **`TLS 1.3`** 
 </details>
 
 <details>
-<summary><b>Extra notes will be added later…</b></summary>
+<summary><b>NGINX</b></summary>
 
 ---
 
-#### Topic
+#### What’s NGINX and How to Use It
+
+**`NGINX`** is an HTTP web server, reverse proxy, content cache, load balancer, TCP/UDP proxy server, and mail proxy server. another server feature NGINX possesses is SSL support, which requires the use of the OpenSSL library. [[nginx.org](nginx.org)]
+
+the **`ngx_http_ssl_module`** is what provides the SSL/TCP support for **`HTTPS`**. to use that module the OpenSSL library is required. **`OpenSSL`** is a toolkit for TLS [[Module ngx_http_ssl_module](https://nginx.org/en/docs/http/ngx_http_ssl_module.html)].
+
+**nginx -t**: tests the configuration file syntax and files mentioned [[NGINX - Command-line parameters](https://nginx.org/en/docs/switches.html)].
+
+***using nginx:***
+
+[What is Nginx (Web Server) and how to install it?](https://www.geeksforgeeks.org/operating-systems/what-is-nginx-web-server-and-how-to-install-it/)
+
+[Deploying NGINX and NGINX Plus with Docker](https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-docker/)
+
+[NGINX Tutorial for Beginners](https://www.youtube.com/watch?v=9t9Mp0BGnyI)
+
+---
+
+#### OpenSSL
+
+***using OpenSSL:***
+
+[ossl-guide-introduction - OpenSSL Documentation](https://docs.openssl.org/3.2/man7/ossl-guide-introduction/)
+
+[OpenSSL Documentation Index](https://docs.openssl.org/master/)
+
+[OpenSSL Command Manual](https://docs.openssl.org/3.2/man1/openssl/)
+
+[ossl-guide-tls-introduction - OpenSSL Documentation](https://docs.openssl.org/master/man7/ossl-guide-tls-introduction/)
+
+[Create Your Own SSL Certificate Authority (on Linux) (video)](https://www.youtube.com/watch?v=SlcrTSvMioU)
+
+[req(1) - Linux man page](https://linux.die.net/man/1/req)
+
+[How to Set Up SSL with NGINX (video)](https://www.youtube.com/watch?v=X3Pr5VATOyA)
+
+[Secure Apache with SSL in Docker (video)](https://youtu.be/8A7bO7MDG9Y?si=4tHE0yqQP_DQ5faO)
+
+---
+
+</details>
+
+<details>
+<summary><b>WordPress</b></summary>
+
+---
+
+#### Installing and Using WordPress’s CLI
+
+[How to install WordPress – Advanced Administration Handbook](https://developer.wordpress.org/advanced-administration/before-install/howto-install/)
+
+[How to install WordPress DETAILED – Advanced Administration Handbook](https://developer.wordpress.org/advanced-administration/before-install/howto-install/#detailed-instructions)
+
+[Nginx – Advanced Administration Handbook | Developer.WordPress.org](http://developer.wordpress.org/)
+
+[How To Setup WordPress on an Nginx LEMP Server (video)](https://www.youtube.com/watch?v=q1c_66QjRYo)
+
+[Quick Start – WP-CLI – WordPress.org](https://make.wordpress.org/cli/handbook/guides/quick-start/)
+
+[Installing – WP-CLI – WordPress.org](https://make.wordpress.org/cli/handbook/guides/installing/)
+
+[WP-CLI Commands | Developer.WordPress.org](https://developer.wordpress.org/cli/commands/)
+
+[wp core – WP-CLI Command | Developer.WordPress.org](https://developer.wordpress.org/cli/commands/core/)
+
+[Twenty Ten | WordPress Theme](https://wordpress.org/themes/twentyten/)
+
+---
+
+#### WordPress Dockerfile / Setup Script
+
+choices:
+
+- Installing ca-certificates to guarantee curl works correctly in the container [[curl not working (Error #77) for SSL connections](https://stackoverflow.com/questions/17064601/curl-not-working-error-77-for-ssl-connections-on-centos-for-non-root-users)];
+- Directly altering the port on the default php config file [[Sed Command in Linux/Unix With Examples](https://www.geeksforgeeks.org/linux-unix/sed-command-in-linux-unix-with-examples/)];
+- Waiting and checking if mariadb has created the needed database [[TLS Handshake Fails with “Host Is Not Allowed to Connect”](https://dev.to/gowrishankar/fixing-mariadb-error-2002-hy000-tls-handshake-fails-with-host-is-not-allowed-to-connect-4h05), [Connect to MariaDB from a different machine](https://docs.bitnami.com/general/infrastructure/mariadb/administration/connect-remotely-mariadb/), [How to check if mysql database exists](https://stackoverflow.com/questions/838978/how-to-check-if-mysql-database-exists)];
+- Addeing general wordpress rules to the nginx config for general files (non php) [[Nginx – Advanced Administration Handbook | Developer.WordPress.org](https://developer.wordpress.org/advanced-administration/server/web-server/nginx/#general-wordpress-rules)].
 
 ---
 </details>
 
+<details>
+<summary><b>Docker Compose File</b></summary>
+
 ---
 
-> *Disclosure: AI was not used in any step of the HTTP development nor research.*
+#### How to use docker compose
+
+- [Compose file reference | Docker Docs](https://docs.docker.com/reference/compose-file/)
+
+docker compose file example: [wordpress - Official Image | Docker Hub](https://hub.docker.com/_/wordpress)
+
+[Volumes | Docker Docs](https://docs.docker.com/engine/storage/volumes/)
+
+[Define and manage volumes in Docker Compose](https://docs.docker.com/reference/compose-file/volumes/)
+
+[Bridge network driver | Docker Docs](https://docs.docker.com/engine/network/drivers/bridge/)
+
+[Docker Volume VS Bind Mount - GeeksforGeeks](https://www.geeksforgeeks.org/devops/docker-volume-vs-bind-mount/)
+
+[Bind mounts | Docker Docs](https://docs.docker.com/engine/storage/bind-mounts/)
+
+[Manage sensitive data with Docker secrets](https://docs.docker.com/engine/swarm/secrets/)
+
+**docker system prune -a -f --volumes**: remove all unused containers, networks, images and volumes.
+
+---
+</details>
+
+<details>
+<summary><b>Setting Up the VM and Scripting</b></summary>
+
+---
+
+#### Setup of the Virtual Machine
+
+[Downloads – Oracle VirtualBox](https://www.virtualbox.org/wiki/Downloads)
+
+[Installing VirtualBox on Windows? Set Up the Dependencies](https://www.makeuseof.com/setup-dependencies-for-virtualbox-installation-on-windows/)
+
+[Installing Debian via the Internet](https://www.debian.org/distrib/netinst)
+
+[Linux Command to Check User Groups - GeeksforGeeks](https://www.geeksforgeeks.org/linux-unix/how-to-check-the-groups-a-user-belongs-to-in-linux/)
+
+[Demystifying the Linux `sudoers` File: A Comprehensive Guide](https://linuxvox.com/blog/linux-sudoers-file/)
+
+[How to Add a User to the sudoers File in Linux](https://www.howtogeek.com/842739/how-to-add-a-user-to-the-sudoers-file-in-linux/)
+
+[What is ZSH](https://www.howtogeek.com/362409/what-is-zsh-and-why-should-you-use-it-instead-of-bash/)
+
+[Dash to dock GNOME Shell extension](https://micheleg.github.io/dash-to-dock/)
+
+[How to Install and Manage GNOME Shell Extension | Baeldung on Linux](https://www.baeldung.com/linux/gnome-shell-extension)
+
+[How to Add and Delete Users on Debian 13 | Linuxize](https://linuxize.com/post/how-to-add-and-delete-users-on-debian/)
+
+---
+
+#### Scripting
+
+[Linux: Generating Random Strings](https://linuxvox.com/blog/linux-generate-random-string/)
+
+[Bash Functions | Linuxize](https://linuxize.com/post/bash-functions/)
+
+[How to Use Variables in Bash Shell Scripts](https://linuxhandbook.com/courses/bash-beginner/bash-variables/)
+
+[Automate Your Linux Setup: Create a One-Command Installation Script! (video)](https://www.youtube.com/watch?v=1J0Hgr2Nc6c)
+
+[User Input (taking user input in a script) - Bash Scripting Course (pt13) (video)](https://www.youtube.com/watch?v=dpQh0iBILI4&list=PL-my9REMIFtGgiQAXqKPJ5UrLdSkxcLBT&index=13)
+
+[The Complete Bash Scripting Course (playlist)](https://www.youtube.com/playlist?list=PL-my9REMIFtGgiQAXqKPJ5UrLdSkxcLBT)
+
+---
+
+</details>
+
+---
+
+> *Disclosure: AI was not used in any step of this project.*
 >
