@@ -16,7 +16,7 @@ This Stack is composed of:
 - `WordPress + pfp-fpm` - Blog Hosting Service with dynamic content;
 - `MariaDB` - Relational database to store the WordPress content.
 
-For a deep dive on each of the Services check the Resources Chapter of the README.md file 📚.
+For a deep dive on each of the Services check the [Resources Chapter](README.md#resources) 📚 of the README.md file .
 
 ## **USAGE**
 

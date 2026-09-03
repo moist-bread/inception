@@ -9,7 +9,7 @@
 
 ## **PREREQUISITES AND SETUP**
 
-As mentioned in the README.md file, there’s a script to install the prerequisites (**curl**, **make** and **docker)** for this project:
+As mentioned in the [README.md](./README.md) file, there’s a script to install the prerequisites (**curl**, **make** and **docker)** for this project:
 
 ```bash
 ./pre_requirements.sh

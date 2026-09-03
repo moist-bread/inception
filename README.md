@@ -16,7 +16,7 @@ It also helps develop a better understanding of  System Administration, Bash Scr
 
 For this project we have to setup and configure three Docker Containers with one service each (`NGINX`, `WordPress` and `MariaDB`), building an infrastructure from them by using the capacities that Docker provides, e.i. Docker Compose. 
 
-For a deep dive on all the topics covered by this project, check the categories in Resources 📚.
+For a deep dive on all the topics covered by this project, check the categories in [Resources](#resources) 📚.
 
 ## **INSTRUCTIONS**
 
@@ -40,7 +40,7 @@ Docker was used to create the design architecture required in the project’s su
 
 By using Docker Compose it’s possible to connect and facilitate communication between multiple micro services, in the specific case of this project, `NGINX`, `WordPress` and `MariaDB`. But instead of using the Official Images from Docker Hub all services were setup and configured from scratch using the Debian image as a starting point. 
 
-More information on how that was done in Resources 📚.
+More information on how that was done in [Resources](#resources) 📚.
 
 ---
 
@@ -49,7 +49,7 @@ More information on how that was done in Resources 📚.
 
 Virtual Machines (VM) make use of `virtualization` whilst Containers use **`containerization`.**  They serve different purposes. The VM runs a whole environment on its own Operating System (OS) which can be useful as it creates an isolated duplicate of a real computer machine, but that also has its down sides, being more resource demanding and more involved to setup.
 
-On the other hand Containers are made to be fast, lightweight and easily to setup and replicate. More information on that in **Docker Concepts**. 
+On the other hand Containers are made to be fast, lightweight and easily to setup and replicate. More information on that in [Docker Concepts](#containers-vs-virtual-machines). 
 
 ---
 
